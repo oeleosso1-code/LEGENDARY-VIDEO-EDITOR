@@ -1,0 +1,6 @@
+{
+  "shots": [
+    {"clip": 0, "start": 0.5, "duration": 2.5, "speed": 1.5},
+    {"clip": 1, "start": 0.3, "duration": 2.5, "speed": 0.5}
+  ]
+}

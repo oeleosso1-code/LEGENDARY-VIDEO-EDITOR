@@ -1,0 +1,9 @@
+services:
+  video-editor:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./jobs:/studio/jobs
+    mem_limit: 4g
+    cpus: 2.0

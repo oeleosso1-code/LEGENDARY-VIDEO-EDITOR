@@ -1,0 +1,35 @@
+# Credentials and local config
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+secrets.json
+
+# Generated video artifacts and user uploads
+jobs/
+media/
+uploads/
+outputs/
+cache/
+*.mp4
+*.mov
+*.mkv
+*.mp3
+*.wav
+*.aac
+*.srt
+!tests/fixtures/**
+
+# Python/build/test
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+.DS_Store

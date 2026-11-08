@@ -1,0 +1,4 @@
+# PySceneDetect (BSD-3-Clause); available to pip install within the environment
+scenedetect-headless>=0.6,<0.8
+# For auto-editor and whisper.cpp, install their CLI executables separately;
+# see INTEGRATIONS.md. They are not included in this repository.
