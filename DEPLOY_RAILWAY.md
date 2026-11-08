@@ -35,3 +35,27 @@
 - إذا تسرب أي سر، ألغِه وأنشئ آخر من مزوّد الخدمة.
 - قد يُنهي Railway الخدمة عند نفاد الرصيد أو الموارد؛ استخدام التخزين الدائم لا يضمن عدم توقف الخدمة.
 - لم تُختبر هذه الخطوات بحساب المستخدم الفعلي؛ يلزم تطبيقها واختبارها على الاستضافة.
+
+
+## عند فشل زر Ship: النشر المباشر من GitHub (نوفمبر 2026)
+
+زر **Ship** الخاص بـ Railway Agent ليس مطلوباً. إذا فشل بسبب الشبكة أو صلاحيات العامل، استخدم لوحة Railway العادية:
+
+1. افتح المشروع ثم **New / Add Service → GitHub Repo**.
+2. اختر `oeleosso1-code/LEGENDARY-VIDEO-EDITOR`، الفرع `main`، وRoot Directory `/`.
+3. يعتمد البناء على `Dockerfile` في جذر المستودع. البوت يعمل بالـTelegram Long Polling؛ **لا تنشئ Domain أو Webhook أو HTTP healthcheck**.
+4. في Variables أضف `TELEGRAM_BOT_TOKEN` و`OPENAI_API_KEY` و`OPENAI_API_KEY_SECONDARY` و`ALLOWED_USER_IDS` بشكل سري. وللتجربة الأولى: `OUTPUT_DIR=/studio/jobs` و`CLOUD_VISION_ENABLED=0` و`MAX_DURATION_SECONDS=60`.
+5. أضف Volume مرتبطاً بالخدمة، واجعل Mount Path هو `/studio/jobs`. يقوم `docker-entrypoint.sh` بإعداد ملكية المجلد بعد تركيب الـVolume، ثم يشغل Python كمستخدم غير مميز. اترك Start Command الافتراضي الخاص بـDockerfile.
+6. اضبط Replicas على `1`، وأوقف أي نسخ أخرى تستخدم نفس Telegram Token.
+7. طبّق التغييرات وانتقل إلى Build Logs وDeploy Logs. اختبر `/start` في Telegram بعد بدء الخدمة.
+
+### تشخيص الأخطاء
+
+- `TELEGRAM_BOT_TOKEN is missing`: التوكن غير موجود في Variables، أو لم تطبق التغييرات.
+- `Permission denied /studio/jobs`: تحقق من ربط الـVolume والمسار ثم أعد النشر.
+- `Conflict: terminated by other getUpdates request`: تعمل نسختان من البوت بنفس التوكن.
+- Telegram `Unauthorized`: التوكن غير صالح.
+- OpenAI `401` أو `429`: مشكلة مفاتيح أو صلاحيات أو حدود استعمال، لا يعني فشل Docker.
+- فشل Ship أو الاتصال بالمنصة **قبل** إنشاء خدمة: راجع حالة شبكة Railway؛ قد تنجح محاولة من شبكة أخرى. لا يمكن إصلاح عطل خارجي مضموناً عن طريق تعديل كود Python.
+
+**Railway 2026:** إعداد `railway.json` القديم (Config as Code) لم يعد متاحاً للمشاريع الجديدة وفق التوثيق الحالي. اضبط الإعدادات من لوحة Railway. يستخدم ملف Docker الجديد صلاحيات root فقط عند تحضير مجلد التخزين، ثم يشغل البوت كمستخدم `studio`.
